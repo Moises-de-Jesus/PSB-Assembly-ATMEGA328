@@ -1,0 +1,213 @@
+;
+; AssemblerApplication4.asm
+;
+; Created: 18/05/2026 08:50:57
+; Author : moise
+;
+.nolist
+.include "m328Pdef.inc"
+.list
+
+.equ BOTAO1 = PD5
+.equ BOTAO2 = PD7
+.def AUX = R16
+.def FLAG = R18
+.def COUNT = R17
+.def DECODE = R19
+.ORG 0x000
+Inicializacoes:
+	LDI COUNT,0b00000000
+	LDI AUX,0b11111111
+	OUT DDRD,AUX
+	OUT DDRB,AUX
+	OUT PORTD,AUX
+	LDI AUX,0x00
+	OUT PORTB,AUX
+	LDI FLAG,0x02
+	NOP 
+Principal:
+	RCALL Apertar1
+	CPI FLAG, 0x00
+	BREQ Contagem
+	RJMP Principal
+Contagem:
+	CPI COUNT, 0b00000000
+	BREQ zero
+
+	CPI COUNT, 0b00000001
+	BREQ um
+
+	CPI COUNT, 0b00000010
+	BREQ dois
+
+	CPI COUNT, 0b00000011
+	BREQ tres
+
+	CPI COUNT, 0b00000100
+	BREQ quatro
+
+	CPI COUNT, 0b00000101
+	BREQ cinco
+
+	CPI COUNT, 0b00000110
+	BREQ seis
+
+	CPI COUNT, 0b00000111
+	BREQ sete
+
+	CPI COUNT, 0b00001000
+	BREQ oito
+
+	CPI COUNT, 0b00001001
+	BREQ nove
+
+	CPI COUNT, 0b00001010
+	BREQ dez
+
+	CPI COUNT, 0b00001011
+	BREQ onze
+
+	CPI COUNT, 0b00001100
+	BREQ doze
+
+	CPI COUNT, 0b00001101
+	BREQ treze
+
+	CPI COUNT, 0b00001110
+	BREQ quatorze
+
+	CPI COUNT, 0b00001111
+	BREQ quinze
+
+	RJMP saida
+	zero:
+		LDI DECODE,0b11111110
+		OUT PORTB, DECODE
+		RJMP saida
+
+	um:
+		LDI DECODE,0b00110000
+		OUT PORTB, DECODE
+		RJMP saida
+
+	dois:
+		LDI DECODE,0b01101101
+		OUT PORTB, DECODE
+		RJMP saida
+
+	tres:
+		LDI DECODE,0b01111001
+		OUT PORTB, DECODE
+		RJMP saida
+
+	quatro:
+		LDI DECODE,0b00110011
+		OUT PORTB, DECODE
+		RJMP saida
+
+	cinco:
+		LDI DECODE,0b01011011
+		OUT PORTB, DECODE
+		RJMP saida
+
+	seis:
+		LDI DECODE,0b01011111
+		OUT PORTB, DECODE
+		RJMP saida
+
+	sete:
+		LDI DECODE,0b01110000
+		OUT PORTB, DECODE
+		RJMP saida
+
+	oito:
+		LDI DECODE,0b11111111
+		OUT PORTB, DECODE
+		RJMP saida
+
+	nove:
+		LDI DECODE,0b11111011
+		OUT PORTB, DECODE
+		RJMP saida
+
+	dez:
+		LDI DECODE,0b11110111
+		OUT PORTB, DECODE
+		RJMP saida
+
+	onze:
+		LDI DECODE,0b10011111
+		OUT PORTB, DECODE
+		RJMP saida
+
+	doze:
+		LDI DECODE,0b11001110
+		OUT PORTB, DECODE
+		RJMP saida
+
+	treze:
+		LDI DECODE,0b10111101
+		OUT PORTB, DECODE
+		RJMP saida
+
+	quatorze:
+		LDI DECODE,0b01001111
+		OUT PORTB, DECODE
+		RJMP saida
+
+	quinze:
+		LDI DECODE,0b01000111
+		OUT PORTB, DECODE
+		RJMP saida
+	saida:
+		RCALL Apertar1
+		RCALL Apertar2
+		RCALL AtrasoM
+		CPI FLAG, 0x00
+		BREQ Soma
+		CPI COUNT,0x00
+		BREQ Volta
+		DEC COUNT
+		RJMP Contagem
+Soma:
+	CPI COUNT,0x0F
+	BREQ Volta
+	INC COUNT
+	RJMP Contagem
+Volta:
+	JMP Contagem
+Apertar1:
+	SBIC PIND,BOTAO1
+	RET
+	Esp_Soltar1:
+		SBIS PIND,BOTAO1 
+		RJMP Esp_Soltar1
+	LDI FLAG, 0b00000000
+	RCALL Atraso
+	RET
+Apertar2:
+	SBIC PIND,BOTAO2
+	RET
+	Esp_Soltar2:
+		SBIS PIND,BOTAO2
+		RJMP Esp_Soltar2
+	LDI FLAG, 0b00000001
+	RCALL Atraso
+	RET
+Atraso:
+	DEC R6
+	BRNE Atraso
+	DEC R1
+	BRNE Atraso
+	RET
+AtrasoM:
+	DEC R5
+	DEC R5
+	BRNE AtrasoM
+	DEC R2
+	DEC R2
+	BRNE AtrasoM
+	DEC R3
+	DEC R3
+	BRNE AtrasoM
+	RET
